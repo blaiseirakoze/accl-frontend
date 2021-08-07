@@ -12,7 +12,7 @@ const store = configureStore();
 
 function App() {
   return (
-    <div className='App'>
+    <div>
       <Provider store={store}>
           <Routes />
       </Provider>

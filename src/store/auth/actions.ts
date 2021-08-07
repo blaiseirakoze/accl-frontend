@@ -9,11 +9,11 @@ export const authActions = (
 ): AppThunk => async dispatch => {
   dispatchHandler({ type: ERRORS, data: null, dispatch });
   try {
-    const URL = "/api/user/auth/signin";
+    const URL = "/auth/signin";
     const { data } = await axios.post(URL, formData);
     if (data) {
       dispatchHandler({ type: LOGIN, data: data, dispatch });
-      localStorage.setItem("QUICKSS-USER-TOKEN", data.token);
+      localStorage.setItem("USER-TOKEN", data.token);
       if(data.user.role === "admin"){
         history.push('/admin/dashboard');
       }
