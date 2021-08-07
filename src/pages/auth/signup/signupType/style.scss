@@ -1,0 +1,10 @@
+@import "../../../../assets/scss/color.style.scss";
+
+.col + .col {
+  margin-left: 300px;
+}
+
+.signup-icon {
+  font-size: 100px !important;
+  color: $blueColor;
+}

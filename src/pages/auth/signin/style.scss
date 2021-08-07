@@ -1,0 +1,15 @@
+@import "../../../assets/scss/color.style.scss";
+
+.container {
+  margin-top: 50px!important;
+}
+
+.card {
+  padding: 2rem;
+  display: flex;
+  justify-content: space-around;
+  width: 20%;
+  border: 1px solid rgba(168, 165, 165, 0.445);
+  border-radius: 7px;
+  margin: 25px;
+}

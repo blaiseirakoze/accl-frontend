@@ -15,7 +15,6 @@ export const authReducer = (
     case ERRORS:
       return { ...state, errors: payload };
     case GET_USER:
-      // console.log("userr reducer ", payload);
       return { ...state, user: payload }  
     default:
       return state;
