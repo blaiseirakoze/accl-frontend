@@ -4,7 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import {useStyles} from './style';
-import PageHeader from '../../../parts/guest/header'
+import PageHeader from '../../../parts/attorney/header'
 import './style.scss';
 import { InputBase, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TablePagination } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';

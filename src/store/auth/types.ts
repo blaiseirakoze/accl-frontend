@@ -12,7 +12,7 @@ export interface ISubErrors {
 }
 
 export interface ILoginParams {
-  phoneNo: string;
+  username: string;
   password: string;
 }
 
@@ -34,7 +34,7 @@ export interface IUserParams {
   id: string;
   fullName: string;
   email: string;
-  phoneNo: string;
+  username: string;
   gender: string;
   createdAt: string;
   updatedAt: string;

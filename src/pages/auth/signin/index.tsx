@@ -14,6 +14,7 @@ import { authActions } from '../../../store/auth/actions';
 import { AppState } from '../../../store/configureStore';
 import Logo from '../../../components/logo'
 import Header from '../../../parts/guest/header';
+import { decode } from 'jsonwebtoken';
 
 type Props = {
   history: any; 
@@ -22,8 +23,18 @@ type Props = {
 
 export default function SignIn(props:Props) {
   const classes = useStyles();
+  const userToken:any = localStorage.getItem("USER-TOKEN");
+  const token:any =  decode(userToken); 
+  const role = token && token.sub;
+  const expiresIn = token && token.exp;
+  if (localStorage.getItem("USER-TOKEN")  && expiresIn > Math.floor(Date.now() / 1000) && role === 'attorney') {
+    window.location.replace('/attorney/case/list');
+  }
+  if (localStorage.getItem("USER-TOKEN")  && expiresIn > Math.floor(Date.now() / 1000) && role === 'client') {
+    window.location.replace('/client/attorney/list'); 
+  }
   const [state, setState] = useState({
-    phoneNo: "",
+    username: "",
     password: "",
     spinner: false,
   });
@@ -31,9 +42,9 @@ export default function SignIn(props:Props) {
   const authReducer = useSelector(
     (state: AppState) => state.auth
   );
-  const { phoneNo, password } = state;
+  const { username, password } = state;
   const data = {
-    phoneNo,
+    username,
     password,
   };
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -67,7 +78,6 @@ export default function SignIn(props:Props) {
               fullWidth
               label="Username"
               name="username"
-              // autoComplete="username"
               autoFocus
               onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e)}
             />
@@ -79,7 +89,6 @@ export default function SignIn(props:Props) {
               name="password"
               label="Password"
               type="password"
-              // autoComplete="current-password"
               onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e)}
             />
             <Button

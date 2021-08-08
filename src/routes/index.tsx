@@ -1,15 +1,17 @@
 import React, { FunctionComponent } from "react";
 import AuthRoutes from "./AuthRoutes";
-import CustomerRoutes from "./CustomerRoutes";
+import ClientRoutes from "./ClientRoutes";
 import AttorneyRoutes from './AttorneyRoutes';
+import GuestRoutes from './GuestRoutes';
 import { BrowserRouter as Router } from "react-router-dom";
 
 const rootRoutes: FunctionComponent = () => {
   return (
     <Router>
       <AuthRoutes />
-      <CustomerRoutes />
+      <ClientRoutes />
       <AttorneyRoutes/>
+      <GuestRoutes />
     </Router>
   );
 };
