@@ -1,20 +1,24 @@
 import React from 'react';
+import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
+import CameraIcon from '@material-ui/icons/PhotoCamera';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
+import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import {useStyles} from './style';
-import Header from '../../../parts/customer/header'
-import './style.scss';
-import TextareaAutosize from '@material-ui/core/TextareaAutosize';
-import { DropzoneArea } from "material-ui-dropzone";
+import { ArrowBackIos, ArrowForwardIos, ArrowRightAlt } from '@material-ui/icons';
+import Header from '../../../parts/guest/header'
+import { Link } from 'react-router-dom';
 
-export default function CaseForm() {
+const cards = [1, 2, 3, 4, 5, 6];
+
+export default function ListAttorneys() {
   const classes = useStyles();
   return (
     <React.Fragment>
@@ -25,7 +29,7 @@ export default function CaseForm() {
         <div className={classes.heroContent}>
           <Container maxWidth="sm">
             <Typography component="h1" variant="h4" align="center" color="textPrimary" gutterBottom>
-              Submit your case
+              Attorneys list
             </Typography>
             <Typography variant="h5" align="center" color="textSecondary" paragraph>
               Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quos non est harum velit numquam laborum?
@@ -35,58 +39,44 @@ export default function CaseForm() {
         <Container className={classes.cardGrid} maxWidth="md">
           {/* End hero unit */}
           <Grid container spacing={4}>
-              <Grid xs={12} sm={6} md={4} className="col">
+            {cards.map((card) => (
+              <Grid item key={card} xs={12} sm={6} md={4}>
                 <Card className={classes.card}>
+                <Link to="/signin" >
                   <CardMedia
                     className={classes.cardMedia}
                     image="https://source.unsplash.com/random"
                     title="Image title"
                   />
+                  </Link>
                   <CardContent className={classes.cardContent}>
                     <Typography gutterBottom variant="h5" component="h2">
-                      Heading
+                      Name
                     </Typography>
                     <Typography>
                       This is a media card. You can use this section to describe the content.
                     </Typography>
                   </CardContent>
                   <CardActions>
+                    <Link to="/signin" >
                     <Button size="small" color="primary">
-                      View
+                      More details <ArrowRightAlt/>
                     </Button>
-                    <Button size="small" color="primary">
-                      Edit
-                    </Button>
+                    </Link>
                   </CardActions>
                 </Card>
               </Grid>
-              <Grid xs={12} sm={6} md={4} className="col">
-                <TextareaAutosize
-                  maxRows={6}
-                  aria-label=""
-                  style={{width:"100%", height: "150px", padding:"1rem", marginBottom: "1rem"}}
-                  placeholder="Describe your case"
-                />
-                <DropzoneArea
-                  acceptedFiles={["image/*", "video/*", "application/*"]}
-                  // onChange={f => onHandleFileImages(f)}
-                  showFileNames
-                  dropzoneText='Upload a document'
-                  showAlerts={false}
-                  filesLimit={20}
-                  dropzoneClass={classes.DropzoneArea}
-                />
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                >Submit</Button>
-              </Grid>
+            ))}
           </Grid>
         </Container>
       </main>
+      {/* Footer */}
+      <footer className={classes.footer}>
+        <Typography variant="h6" align="center" gutterBottom>
+       <ArrowBackIos/>More Attorneys <ArrowForwardIos/>
+        </Typography>
+      </footer>
+      {/* End footer */}
     </React.Fragment>
   );
 }

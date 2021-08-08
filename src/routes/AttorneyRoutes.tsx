@@ -1,11 +1,12 @@
 import React, { FC } from "react";
 import { Route, Switch } from "react-router-dom";
 import CaseList from "../pages/attorney/caseList";
+import ProtectedRoute from './attorneyProtectedRoutes'
 
 const CustomerRoutes: FC = () => {
   return (
     <Switch>
-      <Route path='/case/list' exact component={CaseList} />
+      <ProtectedRoute path='/attorney/case/list' exact component={CaseList} />
     </Switch> 
   );
 };

@@ -10,7 +10,7 @@ import {useStyles} from './style';
 import "./style.scss";
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { authActions } from '../../../../store/auth/actions';
+import { authActions, signUp } from '../../../../store/auth/actions';
 import { AppState } from '../../../../store/configureStore';
 import Logo from '../../../../components/logo'
 import Header from '../../../../parts/guest/header';
@@ -23,19 +23,23 @@ type Props = {
 export default function SignUp(props:Props) {
   const classes = useStyles();
   const [state, setState] = useState({
-    phoneNo: "",
+    firstName: "",
+    lastName: "",
+    address: "",
+    phoneNumber: "",
+    dob: "",
+    document: "",
+    userAttorneyCategory: "",
+    username: "",
     password: "",
     spinner: false,
   });
+  const {firstName, lastName, address, phoneNumber, dob, document, userAttorneyCategory, username, password} = state;
+  const info = { firstName, lastName, address, phoneNumber, dob, document, userAttorneyCategory, userRole: "attorney", username, password };
   const dispatch = useDispatch();
   const authReducer = useSelector(
     (state: AppState) => state.auth
   );
-  const { phoneNo, password } = state;
-  const data = {
-    phoneNo,
-    password,
-  };
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setState({ ...state, [name]: value });
@@ -43,7 +47,7 @@ export default function SignUp(props:Props) {
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     setState({ ...state, spinner: true });
-    dispatch(authActions(data, props.history));
+    dispatch(signUp(info));
   };
   const logoStyle = {
     color: "blue",
