@@ -1,8 +1,11 @@
+import { CHANGE_CASE_STATUS } from "../attorney/types";
+
 export const LOGIN = "LOGIN";
 export const ERRORS_AUTH = "ERRORS_AUTH";
 export const SIGNUP = "SIGNUP";
 export const GET_USERS = "GET_USERS";
 export const ATTORNEY_CATEGORY = "ATTORNEY_CATEGORY";
+export const CHANGE_USER_STATUS = "CHANGE_USER_STATUS"
 
 export interface IResponse {
   statusCode : string,
@@ -100,4 +103,11 @@ interface IAttorneyCategory {
   }
 }
 
-export type IAuthType = ILogin | ILoginErrors | IUserSignup | IGetUsers | IAttorneyCategory;
+interface IChangeUserStatus {
+  type: typeof CHANGE_CASE_STATUS;
+  payload: {
+    changeUserStatusMessage: string
+  }
+}
+
+export type IAuthType = ILogin | ILoginErrors | IUserSignup | IGetUsers | IAttorneyCategory | IChangeUserStatus;

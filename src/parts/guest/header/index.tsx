@@ -15,8 +15,8 @@ const Header = () => {
             <div className="row">
                 <Logo style={logoStyle} homePath={"/"}/>
                 <ul className="col">
-                    <li> <Link to="/signin" >Sign In</Link> </li>
-                    <li> <Link to="/signup/type">Sign Up</Link> </li>
+                    <li> <Link className="atag" to="/signin" >Sign In</Link> </li>
+                    <li> <Link className="atag" to="/signup/type">Sign Up</Link> </li>
                 </ul>
             </div>
         </AppBar>

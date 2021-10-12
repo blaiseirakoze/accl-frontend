@@ -21,7 +21,7 @@ const Header = () => {
             <div className="row">
                 <Logo style={logoStyle} homePath={"/attorney/case/list"}/>
                 <ul className="col">
-                    <li onClick={onSignOut} > <Link to="" >Sign out</Link> </li>
+                    <li className="atag" onClick={onSignOut} > <Link to="" >Sign out</Link> </li>
                 </ul>
             </div>
         </AppBar>
