@@ -15,12 +15,13 @@ import { DropzoneArea } from "material-ui-dropzone";
 import AttornyProfile from '../../../assets/images/attorney-profile.png'
 import { useDispatch, useSelector } from 'react-redux';
 import { createCase } from '../../../store/attorney/actions';
-import { ICasesParams } from '../../../store/attorney/types';
+import { ICasesParams, IResponse } from '../../../store/attorney/types';
 import { decode } from 'jsonwebtoken';
 import { IGetUsersparams } from '../../../store/auth/types';
 import { AppState } from '../../../store/configureStore';
 import { getUsers } from '../../../store/auth/actions';
-
+import { Alert } from '@material-ui/lab';
+  
 type Props = {
   location:any
 }
@@ -30,9 +31,10 @@ export default function CaseForm(props: Props) {
 
   const {user} = props.location.state;  
 
-  const [state, setState] = useState<{caseDescription: string, document: any }>({
+  const [state, setState] = useState<{caseDescription: string, document: any, alert: boolean }>({
     caseDescription: "",
-    document: ""
+    document: [],
+    alert: false
   });
 
   const dispatch = useDispatch();
@@ -40,11 +42,24 @@ export default function CaseForm(props: Props) {
   const { users }: { users: IGetUsersparams[] } = useSelector(
     (state: AppState) => state.auth
   );
+
+  const attorneyReducer = useSelector(
+    (state: AppState) => state.attorney
+  );
   
+  const { caseErrors, caseMessage }: { caseErrors: IResponse, caseMessage: IResponse } = attorneyReducer;
+
   useEffect(() => {
     dispatch(getUsers());
     // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    if(caseErrors || caseMessage){
+      setState({...state, alert: true});
+    }
+    // eslint-disable-next-line
+  }, [attorneyReducer]);
 
   const onHandleFile = (f: File[]) => {
     setState({ ...state, document: f });
@@ -55,37 +70,33 @@ export default function CaseForm(props: Props) {
     setState({ ...state, [name]: value });
   };
 
-  const userToken:any = localStorage.getItem("USER-TOKEN");
-  const token:any = userToken && decode(userToken);
-  const client:any = users.filter(user => user.username === token.sub);
-  const clientId:string = client && client[0].id;
+  let userToken:any = localStorage.getItem("USER-TOKEN");
+  userToken = userToken && userToken.split(',');
+  const token:any = userToken && decode(userToken[0]);
+  const client:any = users && users.filter(user => user.username === token.sub);
+  const clientObj:any = client[0];
+  const clientId = clientObj && clientObj.id;
   
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    // const information: any = {
-    //   caseDescription: state.caseDescription,
-    //   document: state.document,
-    //   client: clientId
-    // }
-
-    const data = {
+    const data:any = {
       caseDescription: state.caseDescription,
       document: state.document,
-      client: clientId
+      client: clientId,
+      attorney: user.id
     };
-
-    const information:any = new FormData();
-    information.append("caseData", JSON.stringify(data));
-    information.append("caseDocument", state.document);
-
-    dispatch(createCase(information))
+    dispatch(createCase(data))
   }
-  
+
+  const onCloseAlert = (event:any) => {
+    setState({...state, alert: false});
+  }
 
   return (
     <React.Fragment>
       <CssBaseline />
       <Header/> 
+      { state.alert?<Alert severity={caseMessage?"success":"error"} onClose={onCloseAlert}>{caseMessage?caseMessage.statusMessage:"oops! something went wrong! please try again"}</Alert>:""} 
       <main>
         {/* Hero unit */}
         <div className={classes.heroContent}>

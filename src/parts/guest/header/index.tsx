@@ -13,7 +13,7 @@ const Header = () => {
     return (
         <AppBar position="relative" className="header-container">
             <div className="row">
-                <Logo style={logoStyle}/>
+                <Logo style={logoStyle} homePath={"/"}/>
                 <ul className="col">
                     <li> <Link to="/signin" >Sign In</Link> </li>
                     <li> <Link to="/signup/type">Sign Up</Link> </li>

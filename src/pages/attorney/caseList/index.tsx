@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect } from 'react';
+import React, { ChangeEvent, useEffect, MouseEvent } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -6,11 +6,14 @@ import Container from '@material-ui/core/Container';
 import {useStyles} from './style';
 import PageHeader from '../../../parts/attorney/header'
 import './style.scss';
-import { InputBase, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TablePagination } from '@material-ui/core';
+import { InputBase, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TablePagination, TextField, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-import { listCase } from '../../../store/attorney/actions';
+import { changeCaseStatus, listCase } from '../../../store/attorney/actions';
 import { AppState } from '../../../store/configureStore';
 import { ICasesParams } from '../../../store/attorney/types';
+import { decode } from 'jsonwebtoken';
+import { IGetUsersparams } from '../../../store/auth/types';
+import { getUsers } from '../../../store/auth/actions';
 
 interface Column {
   id: "name" | "code" | "population" | "size" | "density";
@@ -26,18 +29,28 @@ const CaseList = () => {
 
   const dispatch = useDispatch();
 
+  const { users }: { users: IGetUsersparams[] } = useSelector(
+    (state: AppState) => state.auth
+  );
+
   const attorneyReducer = useSelector((state: AppState) => state.attorney);
 
-  useEffect(() => {
-    dispatch(listCase());
-    // eslint-disable-next-line 
-  }, []);
+ 
 
   const { cases }: { cases: ICasesParams[] } = attorneyReducer;
   
   const rows = cases;
-  console.log("data ", rows);
   
+  useEffect(() => {
+    dispatch(listCase());
+    // eslint-disable-next-line 
+  }, [cases]);
+
+  useEffect(() => {
+    dispatch(getUsers());
+    // eslint-disable-next-line 
+  }, [users]);
+
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -53,6 +66,8 @@ const CaseList = () => {
   };
 
   const [search, setSearch] = React.useState<any>("");
+  const [select, setSelect] = React.useState<any>("pending");
+
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const { value } = e.target;
@@ -61,6 +76,31 @@ const CaseList = () => {
   
 console.log("casesssssssssssssssssssssssssssssss ", cases);
 
+  const onSelect = (e: ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const { value } = e.target;
+    setSelect(value);
+  };
+
+  let userToken:any = localStorage.getItem("USER-TOKEN");
+  userToken = userToken && userToken.split(',');
+  const token:any = userToken && decode(userToken[0]);  
+  const attorney:any = users && users.filter(user => user.username === token.sub);
+  const attorneyObj:any = attorney[0];
+  const attorneyId = attorneyObj && attorneyObj.id;
+
+  // const onClient = (e: MouseEvent) => {
+
+  // }
+  const onChangeCaseStatus = (e:MouseEvent, id:string, status:string)=> {
+    e.preventDefault();
+    const info = {
+      id,
+      status,
+    }
+    dispatch(changeCaseStatus(info));
+    dispatch(listCase());
+  }
   return (
     <React.Fragment>
       <CssBaseline />
@@ -77,7 +117,7 @@ console.log("casesssssssssssssssssssssssssssssss ", cases);
         <Container className={classes.cardGrid} maxWidth="md">
           {/* End hero unit */}
           <Grid container spacing={4}>  
-              
+          <Paper className={classes.root}>
 
               {/* table start ---------------------------------------------------------*/}
               {/* <Header 
@@ -86,24 +126,45 @@ console.log("casesssssssssssssssssssssssssssssss ", cases);
 
                   {/* <Box> */}
                   {/* <Box> */}
-                  <div className={classes.search}>
-                    {/* <div className={classes.searchIcon}>
-                      <SearchIcon />
-                    </div> */}
-                    <InputBase
-                      style={{ backgroundColor: "white" }}
-                      placeholder="Search…"
-                      classes={{
-                        root: classes.inputRoot,
-                        input: classes.inputInput,
-                      }}
-                      inputProps={{ "aria-label": "search" }}
-                      onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e)}
-                    />
+                  <div style={{display:"flex", justifyContent: "space-between"}} >
+                      <TextField
+                        id="outlined-primary"
+                        label="Search"
+                        variant="outlined"
+                        color="primary"
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e)}
+                      />
+                  
+                      <TextField
+                        variant="outlined"
+                        color="primary"
+                        id="outlined-primary"
+                        select
+                        label="Select"
+                        value={select}
+                        onChange={onSelect}
+                      >
+                        <MenuItem selected disabled value="">
+                          status
+                          </MenuItem>
+                          <MenuItem value="pending">
+                          pending
+                          </MenuItem>
+                          <MenuItem value="accept">
+                          accept
+                          </MenuItem>
+                          <MenuItem value="deny">
+                          deny
+                          </MenuItem>
+                          <MenuItem value="close">
+                          close
+                          </MenuItem>
+                      </TextField>
                   </div>
+
                   {/* </Box> */}
                   {/* </Box> */}
-                  <Paper className={classes.root}>
+                  
                     <TableContainer className={classes.container}>
                       <Table stickyHeader aria-label="sticky table">
                         <TableHead>
@@ -117,31 +178,31 @@ console.log("casesssssssssssssssssssssssssssssss ", cases);
                           </TableRow>
                         </TableHead> 
                         <TableBody>
-                          {/* {cases &&
-                            cases
-                              // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                              // .filter((row) => {
-                              //   return (
-                              //     (row &&
-                              //       row.name
-                              //         .toLowerCase()
-                              //         .indexOf(search && search.toLowerCase()) >= 0) ||
-                              //     (row &&
-                              //       row.nature
-                              //         .toLowerCase()
-                              //         .indexOf(search && search.toLowerCase()) >= 0)
-                              //   );
-                              // })
-                              .map((row) => {
-                               return (<TableRow key={row.id} hover style={{ cursor: "pointer" }}>
-                                  <TableCell> { row.caseDescription } </TableCell>
-                                  <TableCell> { row.status } </TableCell>
-                                  <TableCell> { row.document ? row.document : "N/A" } </TableCell>
-                                  <TableCell> { row.createOn } </TableCell>
-                                  <TableCell> { row.client } </TableCell>
-                                  <TableCell> <h3 style={{color: "green"}}>Accept</h3> <h3 style={{color: "red"}}>Deny</h3> </TableCell>
-                                </TableRow>)
-                              })} */}
+                          {rows &&
+                            rows
+                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                            .filter((row:any) => row.attorney && row.attorney.id === attorneyId)
+                            .filter((row:any) => row.status === select && select)
+                              .filter((row) => {
+                                return (
+                                  (row &&
+                                    row.caseDescription
+                                      .toLowerCase()
+                                      .indexOf(search && search.toLowerCase()) >= 0) 
+                                );
+                              }) 
+                              .map((row:any, id) => (
+                                <TableRow key={id} hover >
+                                  <TableCell> {row.caseDescription} </TableCell>
+                                  <TableCell> {row.status} </TableCell>
+                                  <TableCell> <a style={{color:"Highlight"}} href = {"//"+row.document} target = "_blank">Download Pdf</a> </TableCell>
+                                  <TableCell> {row.createOn} </TableCell>
+                                  <TableCell> 
+                                    {/* <a onClick={onClient} href="#"> {row.client.firstName} {row.client.lastName} </a>  */}
+                                    </TableCell>
+                                  <TableCell style={{ cursor: "pointer" }}> {row.status === "pending"?<><h3 onClick={(e: MouseEvent) => onChangeCaseStatus(e, row.id, "accept")} style={{ color: "green" }}>Accept</h3><h3 onClick={(e: MouseEvent) => onChangeCaseStatus(e, row.id, "deny")} style={{ color: "red" }}>Deny</h3></>:<h3 style={{color: "blue"}}>summary</h3> }   </TableCell>
+                                </TableRow>
+                              ))}
                         </TableBody>
                       </Table>
                     </TableContainer>

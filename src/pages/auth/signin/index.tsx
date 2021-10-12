@@ -23,16 +23,16 @@ type Props = {
 
 export default function SignIn(props:Props) {
   const classes = useStyles();
-  const userToken:any = localStorage.getItem("USER-TOKEN");
-  const token:any =  decode(userToken); 
-  const role = token && token.sub;
-  const expiresIn = token && token.exp;
-  if (localStorage.getItem("USER-TOKEN")  && expiresIn > Math.floor(Date.now() / 1000) && role === 'attorney') {
-    window.location.replace('/attorney/case/list');
-  }
-  if (localStorage.getItem("USER-TOKEN")  && expiresIn > Math.floor(Date.now() / 1000) && role === 'client') {
-    window.location.replace('/client/attorney/list'); 
-  }
+  // const userToken:any = localStorage.getItem("USER-TOKEN");
+  // const splitToken = userToken && userToken.split(',');
+  // const token:any =  decode(splitToken && splitToken[0]); 
+  // const expiresIn = token && token.exp;
+  // if (localStorage.getItem("USER-TOKEN")  && expiresIn > Math.floor(Date.now() / 1000) && splitToken[1] === 'attorney') {
+  //   window.location.replace('/attorney/case/list');
+  // }
+  // if (localStorage.getItem("USER-TOKEN")  && expiresIn > Math.floor(Date.now() / 1000) && splitToken[1] === 'client') {
+  //   window.location.replace('/client/attorney/list'); 
+  // }
   const [state, setState] = useState({
     username: "",
     password: "",
@@ -66,7 +66,7 @@ export default function SignIn(props:Props) {
       <Header/> 
       <Container component="main" className="card" maxWidth="xs">
         <div className={classes.paper}>
-          <Logo style={logoStyle}/>
+          <Logo style={logoStyle} homePath={"/"}/>
             <Typography component="h1" variant="h5">
               Sign in
             </Typography>
@@ -107,7 +107,7 @@ export default function SignIn(props:Props) {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/signup/type" variant="body2">
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>

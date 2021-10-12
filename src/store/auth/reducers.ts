@@ -1,8 +1,9 @@
-import { LOGIN, ERRORS, IAuthType, SIGNUP, GET_USERS } from "./types";
+import { LOGIN, ERRORS_AUTH, IAuthType, SIGNUP, GET_USERS, ATTORNEY_CATEGORY } from "./types";
 
 const initialState = {
   data: null,
-  users: []
+  users: [],
+  attorneyCategory: []
 };
 
 export const authReducer = (
@@ -12,12 +13,14 @@ export const authReducer = (
   switch (type) {
     case LOGIN:
       return { ...state, data: payload };
-    case ERRORS:
-      return { ...state, errors: payload };
+    case ERRORS_AUTH:
+      return { ...state, authErrors: payload };
     case SIGNUP:
       return { ...state, signupMessage: payload }  
     case GET_USERS:
-      return { ...state, users: payload }  
+      return { ...state, users: payload }
+    case ATTORNEY_CATEGORY:
+      return { ...state, attorneyCategory: payload }
     default:
       return state;
   }

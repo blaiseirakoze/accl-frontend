@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent } from 'react';
+import React, { ChangeEvent, FormEvent, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
@@ -14,6 +14,8 @@ import { authActions, signUp } from '../../../../store/auth/actions';
 import { AppState } from '../../../../store/configureStore';
 import Logo from '../../../../components/logo'
 import Header from '../../../../parts/guest/header';
+import { Alert } from '@material-ui/lab';
+import { IResponse } from '../../../../store/auth/types';
 
 type Props = {
   history: any; 
@@ -33,12 +35,20 @@ export default function SignUp(props:Props) {
     username: "",
     password: "",
     spinner: false,
+    alert: false
   });
   const {firstName, lastName, address, phoneNumber, dob, username, password} = state;
   const info = { firstName, lastName, address, phoneNumber, dob, userRole: "client", username, password };
   const authReducer = useSelector(
     (state: AppState) => state.auth
   );
+  const { authErrors, signupMessage }: { authErrors: IResponse, signupMessage: String } = authReducer;
+  useEffect(() => {
+    if(authErrors || signupMessage){
+      setState({...state, alert: true});
+    }
+    // eslint-disable-next-line
+  }, [authReducer]);
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setState({ ...state, [name]: value });
@@ -48,6 +58,9 @@ export default function SignUp(props:Props) {
     setState({ ...state, spinner: true });
     dispatch(signUp(info));
   };
+  const onCloseAlert = (event:any) => {
+    setState({...state, alert: false});
+  }
   const logoStyle = {
     color: "blue",
     size: "50px"
@@ -57,8 +70,9 @@ export default function SignUp(props:Props) {
       <CssBaseline />
       <Header/> 
       <Container component="main" className="card" maxWidth="xs">
+      { state.alert?<Alert severity={signupMessage?"success":"error"} onClose={onCloseAlert}>{signupMessage?signupMessage:authErrors}</Alert>:""} 
         <div className={classes.paper}>
-          <Logo style={logoStyle}/>
+          <Logo style={logoStyle} homePath={"/"}/>
             <Typography component="h1" variant="h5">
               Client Sign Up
             </Typography>
@@ -104,6 +118,7 @@ export default function SignUp(props:Props) {
                 onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e)}
               />
               <TextField
+              type="date"
                 variant="outlined"
                 margin="normal"
                 required
@@ -153,13 +168,8 @@ export default function SignUp(props:Props) {
                 Sign up
               </Button>
             <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  {/* Forgot password? */}
-                </Link>
-              </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/signin" variant="body2">
                   {"Already have an account? Sign in"}
                 </Link>
               </Grid>

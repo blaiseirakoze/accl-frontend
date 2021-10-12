@@ -1,5 +1,5 @@
 import axios from "axios";
-import { LOGIN, ERRORS, ILoginParams, SIGNUP, GET_USERS } from "./types";
+import { LOGIN, ERRORS_AUTH, ILoginParams, SIGNUP, GET_USERS, ATTORNEY_CATEGORY } from "./types";
 import { AppThunk } from "../configureStore";
 import { dispatchHandler } from "../helper/dispatchHandler";
 import { decode } from "jsonwebtoken";
@@ -14,41 +14,40 @@ import { decode } from "jsonwebtoken";
 export const authActions = (
   formData: ILoginParams, history:any
 ): AppThunk => async dispatch => {
-  dispatchHandler({ type: ERRORS, data: null, dispatch });
+  dispatchHandler({ type: ERRORS_AUTH, data: null, dispatch });
   try {
     const URL = "/auth/signin";
     const { data } = await axios.post(URL, formData);
-    console.log("dataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ", data);
-    
+        
     if (data) {
-      dispatchHandler({ type: LOGIN, data: data, dispatch });
+      dispatchHandler({ type: LOGIN, data: "logedIn", dispatch });
       const info:any = decode(data.jwt);
-      const role = info.sub;
-      console.log("dataaaaaa ", info);
+      const role = data.role;
       
-      if(role === "admin"){
-        // history.push('/signin');
-        window.location.replace('/signin');
-      }
+      // if(role === "admin"){
+      //   // history.push('/signin');
+      //   window.location.replace('/signin');
+      // }
       if(role === "client"){
-        localStorage.setItem("USER-TOKEN", data.jwt);
-        // history.push('/attorney/list');
+        localStorage.setItem("USER-TOKEN", data.jwt+","+data.role);
+        // history.push('/client/attorney/list');
         window.location.replace('/client/attorney/list');
       }
       if(role === "attorney"){
-        localStorage.setItem("USER-TOKEN", data.jwt);
-        // history.push('/case/list');
+        localStorage.setItem("USER-TOKEN", data.jwt+","+data.role);
+        // history.push('/attorney/case/list');
         window.location.replace('/attorney/case/list');
-      }else{
-        // history.push('/signin');
-        window.location.replace('/signin');
       }
+      // else{
+      //   // history.push('/signin');
+      //   window.location.replace('/signin');
+      // }
     }
   } catch (error:any) {
     if (error) {
       const data = error || error.response;
       return dispatchHandler({
-        type: ERRORS,
+        type: ERRORS_AUTH,
         data,
         dispatch
       });
@@ -57,7 +56,7 @@ export const authActions = (
 };
 
 export const signUp = ( formData: any ): AppThunk => async dispatch => {
-  dispatchHandler({ type: ERRORS, data: null, dispatch });
+  dispatchHandler({ type: ERRORS_AUTH, data: null, dispatch });
   try {
     const info:any = new FormData();
     // formData.append("data", JSON.stringify(info));
@@ -76,7 +75,7 @@ export const signUp = ( formData: any ): AppThunk => async dispatch => {
     if (error) {
       const data = error || error.response;
       return dispatchHandler({
-        type: ERRORS,
+        type: ERRORS_AUTH,
         data,
         dispatch
       });
@@ -85,7 +84,7 @@ export const signUp = ( formData: any ): AppThunk => async dispatch => {
 };
 
 export const getUsers = (): AppThunk => async dispatch => {
-  dispatchHandler({ type: ERRORS, data: null, dispatch });
+  dispatchHandler({ type: ERRORS_AUTH, data: null, dispatch });
   try {
     const URL = "/auth/users";
     const data = await axios.get(URL);
@@ -94,7 +93,25 @@ export const getUsers = (): AppThunk => async dispatch => {
     if (error) {
       const data = error || error.response;
       return dispatchHandler({
-        type: ERRORS,
+        type: ERRORS_AUTH,
+        data,
+        dispatch
+      });
+    }
+  }
+};
+
+export const getAttorneyCategory = (): AppThunk => async dispatch => {
+  dispatchHandler({ type: ERRORS_AUTH, data: null, dispatch });
+  try {
+    const URL = "/api/attorneyCategory";
+    const data = await axios.get(URL);
+    dispatchHandler({ type: ATTORNEY_CATEGORY, data: data.data, dispatch });
+  } catch (error:any) {
+    if (error) {
+      const data = error || error.response;
+      return dispatchHandler({
+        type: ERRORS_AUTH,
         data,
         dispatch
       });
