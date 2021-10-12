@@ -4,16 +4,16 @@ import axios from "axios";
 import { Provider } from "react-redux";
 import { configureStore } from "./store/configureStore";
 axios.defaults.baseURL = process.env.REACT_APP_BACKEND_URL;
-axios.defaults.headers = {
-  'x-access-token': localStorage.getItem("USER-TOKEN"),
-};
+// axios.defaults.headers = {
+//   Authorization: `Bearer ${localStorage.getItem("USER-TOKEN")}`
+// };
 
 const store = configureStore();
 
 function App() {
   return (
     <div>
-      <Provider store={store}>
+      <Provider store={store}> 
           <Routes />
       </Provider>
     </div>

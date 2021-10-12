@@ -1,5 +1,5 @@
 import axios from "axios";
-import { LOGIN, ERRORS, ILoginParams, GET_USER } from "./types";
+import { LOGIN, ERRORS, ILoginParams, SIGNUP, GET_USERS } from "./types";
 import { AppThunk } from "../configureStore";
 import { dispatchHandler } from "../helper/dispatchHandler";
 import { decode } from "jsonwebtoken";
@@ -18,6 +18,8 @@ export const authActions = (
   try {
     const URL = "/auth/signin";
     const { data } = await axios.post(URL, formData);
+    console.log("dataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ", data);
+    
     if (data) {
       dispatchHandler({ type: LOGIN, data: data, dispatch });
       const info:any = decode(data.jwt);
@@ -42,7 +44,7 @@ export const authActions = (
         window.location.replace('/signin');
       }
     }
-  } catch (error) {
+  } catch (error:any) {
     if (error) {
       const data = error || error.response;
       return dispatchHandler({
@@ -53,29 +55,6 @@ export const authActions = (
     }
   }
 };
-
-// export const signUp = (assessment) => async (dispatch) => {
-//   try {
-//     const URL = "/auth/signup";
-//     const header = {
-//       headers: {
-//         "Content-Type": "multipart/form-data",
-//       },
-//     };
-//     await axios.post(URL, assessment, header);
-//     const data = "successfully added";
-//     dispatch({
-//       type: ADD_ASSESSMENT,
-//       payload: data,
-//     });
-//   } catch (error) {
-//     const data = error.response;
-//     dispatch({
-//       type: ERRORS,
-//       payload: data,
-//     });
-//   }
-// };
 
 export const signUp = ( formData: any ): AppThunk => async dispatch => {
   dispatchHandler({ type: ERRORS, data: null, dispatch });
@@ -91,9 +70,27 @@ export const signUp = ( formData: any ): AppThunk => async dispatch => {
     //   },
     // };
     await axios.post(URL, formData);
-    const data = "successfully added";
-    
-  } catch (error) {
+    const data = "successfully created";
+    dispatchHandler({ type: SIGNUP, data: data, dispatch });
+  } catch (error:any) {
+    if (error) {
+      const data = error || error.response;
+      return dispatchHandler({
+        type: ERRORS,
+        data,
+        dispatch
+      });
+    }
+  }
+};
+
+export const getUsers = (): AppThunk => async dispatch => {
+  dispatchHandler({ type: ERRORS, data: null, dispatch });
+  try {
+    const URL = "/auth/users";
+    const data = await axios.get(URL);
+    dispatchHandler({ type: GET_USERS, data: data.data, dispatch });
+  } catch (error:any) {
     if (error) {
       const data = error || error.response;
       return dispatchHandler({
