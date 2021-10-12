@@ -8,7 +8,9 @@ import PageHeader from '../../../parts/attorney/header'
 import './style.scss';
 import { InputBase, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TablePagination } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
+import { listCase } from '../../../store/attorney/actions';
 import { AppState } from '../../../store/configureStore';
+import { ICasesParams } from '../../../store/attorney/types';
 
 interface Column {
   id: "name" | "code" | "population" | "size" | "density";
@@ -18,22 +20,24 @@ interface Column {
   format?: (value: number) => string;
 }
 
-export default function CaseList() {
+const CaseList = () => {
+
   const classes = useStyles();
 
   const dispatch = useDispatch();
 
-  // const concessionReducer = useSelector((state: AppState) => state.concession);
+  const attorneyReducer = useSelector((state: AppState) => state.attorney);
 
   useEffect(() => {
-    // dispatch(listConcession());
-    // eslint-disable-next-line
+    dispatch(listCase());
+    // eslint-disable-next-line 
   }, []);
 
-  // const {
-  //   listConcessionData,
-  // }: { listConcessionData: ListConcession[] } = concessionReducer;
-  // const rows = listConcessionData;
+  const { cases }: { cases: ICasesParams[] } = attorneyReducer;
+  
+  const rows = cases;
+  console.log("data ", rows);
+  
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -54,6 +58,8 @@ export default function CaseList() {
     const { value } = e.target;
     setSearch(value);
   };
+  
+console.log("casesssssssssssssssssssssssssssssss ", cases);
 
   return (
     <React.Fragment>
@@ -102,56 +108,40 @@ export default function CaseList() {
                       <Table stickyHeader aria-label="sticky table">
                         <TableHead>
                           <TableRow>
-                            <TableCell> Names </TableCell>
-                            <TableCell> Nature </TableCell>
-                            <TableCell> Account Number </TableCell>
-                            <TableCell> Charges </TableCell>
-                            <TableCell> Concession Date </TableCell>
-                            <TableCell> Observation </TableCell>
+                            <TableCell> Case Description </TableCell>
+                            <TableCell> Status </TableCell>
+                            <TableCell> Document </TableCell>
+                            <TableCell> Create On </TableCell>
+                            <TableCell> Client </TableCell>
+                            <TableCell> Action </TableCell>
                           </TableRow>
-                        </TableHead>
+                        </TableHead> 
                         <TableBody>
-                          {/* {rows &&
-                            rows
-                              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                              .filter((row) => {
-                                return (
-                                  (row &&
-                                    row.name
-                                      .toLowerCase()
-                                      .indexOf(search && search.toLowerCase()) >= 0) ||
-                                  (row &&
-                                    row.nature
-                                      .toLowerCase()
-                                      .indexOf(search && search.toLowerCase()) >= 0) ||
-                                  (row &&
-                                    row.accountNumber
-                                      .toLowerCase()
-                                      .indexOf(search && search.toLowerCase()) >= 0) ||
-                                  (row &&
-                                    row.charges
-                                      .toLowerCase()
-                                      .indexOf(search && search.toLowerCase()) >= 0) ||
-                                  (row &&
-                                    row.concessionDate
-                                      .toLowerCase()
-                                      .indexOf(search && search.toLowerCase()) >= 0) ||
-                                  (row &&
-                                    row.observation
-                                      .toLowerCase()
-                                      .indexOf(search && search.toLowerCase()) >= 0)
-                                );
-                              })
-                              .map((row, id) => ( */}
-                                <TableRow  hover style={{ cursor: "pointer" }}>
-                                  <TableCell> Names </TableCell>
-                                    <TableCell> Nature </TableCell>
-                                    <TableCell> Account Number </TableCell>
-                                    <TableCell> Charges </TableCell>
-                                    <TableCell> Concession Date </TableCell>
-                                    <TableCell> Observation </TableCell>
-                                </TableRow>
-                              {/* // ))} */}
+                          {/* {cases &&
+                            cases
+                              // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                              // .filter((row) => {
+                              //   return (
+                              //     (row &&
+                              //       row.name
+                              //         .toLowerCase()
+                              //         .indexOf(search && search.toLowerCase()) >= 0) ||
+                              //     (row &&
+                              //       row.nature
+                              //         .toLowerCase()
+                              //         .indexOf(search && search.toLowerCase()) >= 0)
+                              //   );
+                              // })
+                              .map((row) => {
+                               return (<TableRow key={row.id} hover style={{ cursor: "pointer" }}>
+                                  <TableCell> { row.caseDescription } </TableCell>
+                                  <TableCell> { row.status } </TableCell>
+                                  <TableCell> { row.document ? row.document : "N/A" } </TableCell>
+                                  <TableCell> { row.createOn } </TableCell>
+                                  <TableCell> { row.client } </TableCell>
+                                  <TableCell> <h3 style={{color: "green"}}>Accept</h3> <h3 style={{color: "red"}}>Deny</h3> </TableCell>
+                                </TableRow>)
+                              })} */}
                         </TableBody>
                       </Table>
                     </TableContainer>
@@ -163,9 +153,9 @@ export default function CaseList() {
                     {/* <TablePagination
                       rowsPerPageOptions={[10, 25, 100]}
                       component="div"
-                      count={rows.length}
+                      count={rows && rows.length}
                       rowsPerPage={rowsPerPage}
-                      page={page}
+                      page={page && page}
                       onChangePage={handleChangePage}
                       onChangeRowsPerPage={handleChangeRowsPerPage}
                     /> */}
@@ -178,3 +168,5 @@ export default function CaseList() {
     </React.Fragment>
   );
 }
+
+export default CaseList;

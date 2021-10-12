@@ -1,6 +1,7 @@
 export const LOGIN = "LOGIN";
 export const ERRORS = "ERRORS";
-export const GET_USER = "GET_USER";
+export const SIGNUP = "SIGNUP";
+export const GET_USERS = "GET_USERS";
 export interface IErrors {
   status: string;
   statusText: string;
@@ -41,11 +42,46 @@ export interface IUserParams {
   clientId: string;
   roleId: string;
 }
-interface IUser {
-  type: typeof GET_USER;
-  payload: {
-    errors: IUserParams;
-  };
+
+export interface IRoleParams {
+  id: string,
+  name: string,
+  createOn: string
 }
 
-export type IAuthType = ILogin | ILoginErrors | IUser;
+export interface IAttorneyCategoryParams {
+  id: string,
+  name: string,
+  createOn: string
+}
+
+export interface IGetUsersparams {
+  id: string,
+  active: boolean,
+  firstName: string,
+  username: string,
+  lastName: string,
+  address: string,
+  phoneNumber: string,
+  dob: string,
+  createOn: string,
+  rate: number,
+  role: IRoleParams,
+  attorneyCategory: IAttorneyCategoryParams
+}
+
+interface IGetUsers {
+  type: typeof GET_USERS;
+  payload: {
+    users: IGetUsersparams;
+  }
+}
+
+interface IUserSignup {
+  type: typeof SIGNUP;
+  payload: {
+    signupMessage: string;
+  }
+}
+
+export type IAuthType = ILogin | ILoginErrors | IUserSignup | IGetUsers;
