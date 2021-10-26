@@ -1,10 +1,13 @@
 export const LOGIN = "LOGIN";
-export const ERRORS = "ERRORS";
+export const ERRORS_AUTH = "ERRORS_AUTH";
 export const SIGNUP = "SIGNUP";
 export const GET_USERS = "GET_USERS";
-export interface IErrors {
-  status: string;
-  statusText: string;
+export const ATTORNEY_CATEGORY = "ATTORNEY_CATEGORY";
+
+export interface IResponse {
+  statusCode : string,
+  statusMessage : string,
+  zoneDateTime : string
 }
 
 export interface ISubErrors {
@@ -20,14 +23,14 @@ export interface ILoginParams {
 interface ILogin {
   type: typeof LOGIN;
   payload: {
-    data: ILoginParams;
+    signupMessage: string;
   };
 }
 
 interface ILoginErrors {
-  type: typeof ERRORS;
+  type: typeof ERRORS_AUTH;
   payload: {
-    errors: IErrors;
+    authErrors: IResponse;
   };
 }
 
@@ -84,4 +87,17 @@ interface IUserSignup {
   }
 }
 
-export type IAuthType = ILogin | ILoginErrors | IUserSignup | IGetUsers;
+export interface IAttorneyCategoryparams {
+  id: string,
+  name: string,
+  createOn: string
+}
+
+interface IAttorneyCategory {
+  type: typeof ATTORNEY_CATEGORY;
+  payload: {
+    roles: IAttorneyCategoryparams
+  }
+}
+
+export type IAuthType = ILogin | ILoginErrors | IUserSignup | IGetUsers | IAttorneyCategory;

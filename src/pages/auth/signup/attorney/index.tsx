@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent } from 'react';
+import React, { ChangeEvent, FormEvent, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
@@ -10,10 +10,12 @@ import {useStyles} from './style';
 import "./style.scss";
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { authActions, signUp } from '../../../../store/auth/actions';
+import { authActions, getAttorneyCategory, signUp } from '../../../../store/auth/actions';
 import { AppState } from '../../../../store/configureStore';
 import Logo from '../../../../components/logo'
 import Header from '../../../../parts/guest/header';
+import { IAttorneyCategoryparams, IResponse } from '../../../../store/auth/types';
+import { Alert } from '@material-ui/lab';
 
 type Props = {
   history: any; 
@@ -33,6 +35,7 @@ export default function SignUp(props:Props) {
     username: "",
     password: "",
     spinner: false,
+    alert: false
   });
   const {firstName, lastName, address, phoneNumber, dob, document, userAttorneyCategory, username, password} = state;
   const info = { firstName, lastName, address, phoneNumber, dob, document, userAttorneyCategory, userRole: "attorney", username, password };
@@ -40,6 +43,17 @@ export default function SignUp(props:Props) {
   const authReducer = useSelector(
     (state: AppState) => state.auth
   );
+  const { attorneyCategory, authErrors, signupMessage }: { attorneyCategory: IAttorneyCategoryparams[], authErrors: IResponse, signupMessage: String } = authReducer;
+  useEffect(() => {
+    if(authErrors || signupMessage){
+      setState({...state, alert: true});
+    }
+    // eslint-disable-next-line
+  }, [authReducer]);
+  useEffect(() => {
+    dispatch(getAttorneyCategory());
+    // eslint-disable-next-line
+  },[]);
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setState({ ...state, [name]: value });
@@ -49,6 +63,9 @@ export default function SignUp(props:Props) {
     setState({ ...state, spinner: true });
     dispatch(signUp(info));
   };
+  const onCloseAlert = (event:any) => {
+    setState({...state, alert: false});
+  }
   const logoStyle = {
     color: "blue",
     size: "50px"
@@ -58,8 +75,9 @@ export default function SignUp(props:Props) {
       <CssBaseline />
       <Header/> 
       <Container component="main" className="card" maxWidth="xs">
+      { state.alert?<Alert severity={signupMessage?"success":"error"} onClose={onCloseAlert}>{signupMessage?signupMessage:authErrors}</Alert>:""} 
         <div className={classes.paper}>
-          <Logo style={logoStyle}/>
+          <Logo style={logoStyle} homePath={"/"}/>
             <Typography component="h1" variant="h5">
               Attorney Sign Up 
             </Typography>
@@ -106,6 +124,7 @@ export default function SignUp(props:Props) {
                 onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e)}
               />
               <TextField
+                type="date"
                 variant="outlined"
                 margin="normal"
                 required
@@ -127,6 +146,7 @@ export default function SignUp(props:Props) {
                 onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e)}
               />
               <TextField
+                select
                 variant="outlined"
                 margin="normal"
                 required
@@ -135,7 +155,11 @@ export default function SignUp(props:Props) {
                 name="userAttorneyCategory"
                 autoFocus
                 onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e)}
-              />
+              >
+                {attorneyCategory && attorneyCategory.map((item:any) => 
+                    <option style={{cursor: "pointer"}} key={item.id} value={item.name}>{item.name}</option>
+                )}
+              </TextField>
               <TextField
                 variant="outlined"
                 margin="normal"
@@ -182,7 +206,7 @@ export default function SignUp(props:Props) {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/signin" variant="body2">
                   {"Already have an account? Sign in"}
                 </Link>
               </Grid>

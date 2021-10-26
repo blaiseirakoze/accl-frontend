@@ -1,8 +1,11 @@
+import { IUserParams } from "../auth/types";
+
 export const ERRORS_CASE = "ERRORS";
 export const GET_CASE = "GET_CASE";
-export const CREATE_CASE = "CREATE_CASE"
+export const CREATE_CASE = "CREATE_CASE";
+export const CHANGE_CASE_STATUS = "CHANGE_CASE_STATUS";
 
-export interface IErrors {
+export interface IResponse {
   statusCode : string,
   statusMessage : string,
   zoneDateTime : string
@@ -11,7 +14,7 @@ export interface IErrors {
 interface ILoginErrors {
   type: typeof ERRORS_CASE;
   payload: {
-    errors: IErrors;
+    errors: IResponse;
   };
 }
 
@@ -25,8 +28,8 @@ export interface ICasesParams {
   deleted?: boolean,
   createOn?: string,
   updatedOn?: string,
-  client: string,
-  attorney: string
+  client?: IUserParams,
+  attorney?: IUserParams
 }
 
 interface ICase {
@@ -36,4 +39,18 @@ interface ICase {
   };
 }
 
-export type IAttorneyType = ILoginErrors | ICase;
+interface ICreateCase {
+  type: typeof CREATE_CASE;
+  payload: {
+    caseMessage: IResponse;
+  };
+}
+
+interface IChangeCaseStatus {
+  type: typeof CHANGE_CASE_STATUS;
+  payload: {
+    changeCaseMessage: string;
+  };
+}
+
+export type IAttorneyType = ILoginErrors | ICase | ICreateCase | IChangeCaseStatus;

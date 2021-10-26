@@ -1,7 +1,10 @@
-import { ERRORS_CASE, IAttorneyType, GET_CASE } from "./types";
+import { ERRORS_CASE, IAttorneyType, GET_CASE, CREATE_CASE, CHANGE_CASE_STATUS } from "./types";
 
 const initialState = {
-  cases: []
+  cases: [],
+  caseMessage: null,
+  caseErrors: null,
+  changeCaseMessage: null
 };
 
 export const attorneyReducer = (
@@ -10,9 +13,13 @@ export const attorneyReducer = (
 ) => {
   switch (type) {
     case ERRORS_CASE:
-      return { ...state, errors: payload };
+      return { ...state, caseErrors: payload, caseMessage: null };
     case GET_CASE:
       return { ...state, cases: payload }  
+    case CREATE_CASE:
+      return { ...state, caseMessage: payload, caseErrors: null }  
+    case CHANGE_CASE_STATUS:
+      return { ...state, changeCaseMessage: payload }
     default:
       return state;
   }

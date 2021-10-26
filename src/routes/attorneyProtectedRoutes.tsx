@@ -3,9 +3,11 @@ import { Route, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { decode } from "jsonwebtoken";
 
-const userToken:any = localStorage.getItem("USER-TOKEN");
-const token:any =  decode(userToken); 
-const role = token && token.sub;
+let userToken:any = localStorage.getItem("USER-TOKEN");
+  userToken = userToken && userToken.split(',');
+  const token:any = userToken && decode(userToken[0]);
+  
+const role = userToken && userToken[1];
 const expiresIn = token && token.exp;
 
 const attorneyProtectedRoute = ({ isAttorney, component: Component, ...rest }: {
@@ -16,7 +18,7 @@ const attorneyProtectedRoute = ({ isAttorney, component: Component, ...rest }: {
   <Route
     {...rest}
     render={props => {
-      if(userToken && expiresIn > Math.floor(Date.now() / 1000) && isAttorney){
+      if(token && expiresIn > Math.floor(Date.now() / 1000) && isAttorney){
         return <Component {...props} />;
       } else {
         return (

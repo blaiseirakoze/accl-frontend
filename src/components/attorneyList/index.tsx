@@ -16,7 +16,7 @@ const AttorneyList = (props:Props) => {
     return (
         <Grid container spacing={4}>
             {users && users
-            .filter((user:any)=> user.role.name === "attorney")
+            .filter((user:any)=> user.role.name === "attorney" && user.active === true)
             .map((user) => (                   
               <Grid item key={user.id} xs={12} sm={6} md={4}>
                 <Card className={classes.card}>
