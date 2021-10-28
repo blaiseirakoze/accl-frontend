@@ -6,50 +6,18 @@ import Container from '@material-ui/core/Container';
 import {useStyles} from './style';
 import PageHeader from '../../../parts/attorney/header'
 import './style.scss';
-import { InputBase, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TablePagination, TextField, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
+import { InputBase, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TextField, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeCaseStatus, listCase } from '../../../store/attorney/actions';
 import { AppState } from '../../../store/configureStore';
-import { ICasesParams } from '../../../store/attorney/types';
 import { decode } from 'jsonwebtoken';
 import { IGetUsersparams } from '../../../store/auth/types';
 import { getUsers } from '../../../store/auth/actions';
-
-interface Column {
-  id: "name" | "code" | "population" | "size" | "density";
-  label: string;
-  minWidth?: number;
-  align?: "right";
-  format?: (value: number) => string;
-}
-
-const CaseList = () => {
+ 
+const AttorneysList = () => {
 
   const classes = useStyles();
 
-  const dispatch = useDispatch();
-
-  const { users }: { users: IGetUsersparams[] } = useSelector(
-    (state: AppState) => state.auth
-  );
-
-  const attorneyReducer = useSelector((state: AppState) => state.attorney);
-
- 
-
-  const { cases }: { cases: ICasesParams[] } = attorneyReducer;
   
-  const rows = cases;
-  
-  useEffect(() => {
-    dispatch(listCase());
-    // eslint-disable-next-line 
-  }, [cases]);
-
-  useEffect(() => {
-    dispatch(getUsers());
-    // eslint-disable-next-line 
-  }, [users]);
 
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -65,8 +33,24 @@ const CaseList = () => {
     setPage(0);
   };
 
-  const [search, setSearch] = React.useState<any>("");
-  const [select, setSelect] = React.useState<any>("pending");
+ 
+//=====================================================================
+
+const [search, setSearch] = React.useState<any>("");
+const [select, setSelect] = React.useState<any>("admin");
+
+  const dispatch = useDispatch();
+
+  const { users }: { users: IGetUsersparams[] } = useSelector(
+    (state: AppState) => state.auth
+  );
+  
+  const rows = users;
+  
+  useEffect(() => {
+    dispatch(getUsers());
+    // eslint-disable-next-line 
+  }, [users]);
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -87,18 +71,6 @@ const CaseList = () => {
   const attorneyObj:any = attorney[0];
   const attorneyId = attorneyObj && attorneyObj.id;
 
-  // const onClient = (e: MouseEvent) => {
-
-  // }
-  const onChangeCaseStatus = (e:MouseEvent, id:string, status:string)=> {
-    e.preventDefault();
-    const info = {
-      id,
-      status,
-    }
-    dispatch(changeCaseStatus(info));
-    dispatch(listCase());
-  }
   return (
     <React.Fragment>
       <CssBaseline />
@@ -108,7 +80,7 @@ const CaseList = () => {
         <div className={classes.heroContent}>
           <Container maxWidth="sm">
             <Typography component="h1" variant="h4" align="center" color="textPrimary" gutterBottom>
-              List of cases
+              List of attorneys
             </Typography>
           </Container>
         </div>
@@ -133,31 +105,28 @@ const CaseList = () => {
                         onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e)}
                       />
                   
-                      <TextField
-                        variant="outlined"
-                        color="primary"
-                        id="outlined-primary"
-                        select
-                        label="Select"
-                        value={select}
-                        onChange={onSelect}
-                      >
-                        <MenuItem selected disabled value="">
-                          status
+                        {/* <TextField
+                          variant="outlined"
+                          color="primary"
+                          id="outlined-primary"
+                          select
+                          label="Select"
+                          value={select}
+                          onChange={onSelect}
+                        >
+                          <MenuItem selected value="admin">
+                          admin
                           </MenuItem>
-                          <MenuItem value="pending">
-                          pending
+                          <MenuItem value="client">
+                          client
                           </MenuItem>
-                          <MenuItem value="accept">
-                          accept
+                          <MenuItem value="attorney">
+                          attorney
                           </MenuItem>
-                          <MenuItem value="deny">
-                          deny
+                          <MenuItem value="court">
+                          court
                           </MenuItem>
-                          <MenuItem value="close">
-                          close
-                          </MenuItem>
-                      </TextField>
+                      </TextField> */}
                   </div>
 
                   {/* </Box> */}
@@ -167,11 +136,17 @@ const CaseList = () => {
                       <Table stickyHeader aria-label="sticky table">
                         <TableHead>
                           <TableRow>
-                            <TableCell> Case Description </TableCell>
-                            <TableCell> Status </TableCell>
-                            <TableCell> Document </TableCell>
-                            <TableCell> Create On </TableCell>
-                            <TableCell> Client </TableCell>
+                            <TableCell> username </TableCell>
+                            <TableCell> active </TableCell>
+                            <TableCell> firstName </TableCell>
+                            <TableCell> lastName </TableCell>
+                            <TableCell> address </TableCell>
+                            <TableCell> phoneNumber </TableCell>
+                            <TableCell> dob </TableCell>
+                            <TableCell> create On </TableCell>
+                            <TableCell> rate </TableCell>
+                            <TableCell> role </TableCell>
+                            <TableCell> attorney category </TableCell>
                             <TableCell> Action </TableCell>
                           </TableRow>
                         </TableHead> 
@@ -179,26 +154,55 @@ const CaseList = () => {
                           {rows &&
                             rows
                             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .filter((row:any) => row.attorney && row.attorney.id === attorneyId)
-                            .filter((row:any) => row.status === select && select)
+                            .filter((user:any)=> user.role.name === "attorney" && user.active === true)
                               .filter((row) => {
                                 return (
-                                  (row &&
-                                    row.caseDescription
+                                  (row.username &&
+                                    row.username
                                       .toLowerCase()
-                                      .indexOf(search && search.toLowerCase()) >= 0) 
+                                      .indexOf(search && search.toLowerCase()) >= 0) ||
+                                  (row.firstName &&
+                                    row.firstName
+                                      .toLowerCase()
+                                      .indexOf(search && search.toLowerCase()) >= 0) ||
+                                  (row.firstName &&
+                                    row.firstName
+                                      .toLowerCase()
+                                      .indexOf(search && search.toLowerCase()) >= 0) || 
+                                  (row.lastName &&
+                                    row.lastName
+                                      .toLowerCase()
+                                      .indexOf(search && search.toLowerCase()) >= 0) ||
+                                  (row.address &&
+                                    row.address
+                                      .toLowerCase()
+                                      .indexOf(search && search.toLowerCase()) >= 0) ||
+                                  (row.phoneNumber &&
+                                    row.phoneNumber
+                                      .toLowerCase()
+                                      .indexOf(search && search.toLowerCase()) >= 0) ||
+                                  (row.dob &&
+                                    row.dob
+                                      .toLowerCase()
+                                      .indexOf(search && search.toLowerCase()) >= 0)         
                                 );
                               }) 
-                              .map((row:any, id) => (
-                                <TableRow key={id} hover >
-                                  <TableCell> {row.caseDescription} </TableCell>
-                                  <TableCell> {row.status} </TableCell>
-                                  <TableCell> <a style={{color:"Highlight"}} href = {"//"+row.document} target = "_blank">Download Pdf</a> </TableCell>
-                                  <TableCell> {row.createOn} </TableCell>
+                              .map((row:any) => (
+                                <TableRow key={row.id} hover >
+                                  <TableCell> {row.username?row.username:"N/A"} </TableCell>
+                                  <TableCell> {row.active?row.active:'N/A'} </TableCell>
+                                  <TableCell> {row.firstName?row.firstName:"N/A"} </TableCell>
+                                  <TableCell> {row.lastName?row.lastName:"N/A"} </TableCell>
+                                  <TableCell> {row.address?row.address:"N/A"} </TableCell>
+                                  <TableCell> {row.phoneNumber?row.phoneNumber:"N/A"} </TableCell>
+                                  <TableCell> {row.dob?row.dob:"N/A"} </TableCell>
+                                  <TableCell> {row.createOn?row.createOn:"N/A"} </TableCell>
+                                  <TableCell> {row.rate?row.rate:"N/A"} </TableCell>
+                                  <TableCell> {row.role?row.role.name:"N/A"} </TableCell>
+                                  <TableCell> {row.attorneyCategory?row.attorneyCategory.name:"N/A"} </TableCell>
                                   <TableCell> 
                                     {/* <a onClick={onClient} href="#"> {row.client.firstName} {row.client.lastName} </a>  */}
                                     </TableCell>
-                                  <TableCell style={{ cursor: "pointer" }}> {row.status === "pending"?<><h3 onClick={(e: MouseEvent) => onChangeCaseStatus(e, row.id, "accept")} style={{ color: "green" }}>Accept</h3><h3 onClick={(e: MouseEvent) => onChangeCaseStatus(e, row.id, "deny")} style={{ color: "red" }}>Deny</h3></>:<h3 style={{color: "blue"}}>summary</h3> }   </TableCell>
                                 </TableRow>
                               ))}
                         </TableBody>
@@ -228,4 +232,4 @@ const CaseList = () => {
   );
 }
 
-export default CaseList;
+export default AttorneysList;

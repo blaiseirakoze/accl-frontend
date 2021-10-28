@@ -31,14 +31,15 @@ export default function SignUp(props:Props) {
     phoneNumber: "",
     dob: "",
     document: "",
+    userRole: "",
     userAttorneyCategory: "",
     username: "",
     password: "",
     spinner: false,
     alert: false
   });
-  const {firstName, lastName, address, phoneNumber, dob, document, userAttorneyCategory, username, password} = state;
-  const info = { firstName, lastName, address, phoneNumber, dob, document, userAttorneyCategory, userRole: "attorney", username, password };
+  const {firstName, lastName, address, phoneNumber, dob, document, userRole, userAttorneyCategory, username, password} = state;
+  const info = { firstName, lastName, address, phoneNumber, dob, document, userAttorneyCategory, userRole, username, password };
   const dispatch = useDispatch();
   const authReducer = useSelector(
     (state: AppState) => state.auth
@@ -79,7 +80,7 @@ export default function SignUp(props:Props) {
         <div className={classes.paper}>
           <Logo style={logoStyle} homePath={"/"}/>
             <Typography component="h1" variant="h5">
-              Attorney Sign Up 
+              Attorney & Court Sign Up 
             </Typography>
           <form className={classes.form} onSubmit={onSubmit}>
             <TextField
@@ -145,6 +146,23 @@ export default function SignUp(props:Props) {
                 type="file"
                 onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e)}
               />
+
+              <TextField
+                select
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                label="user role"
+                name="userRole"
+                autoFocus
+                onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e)}
+              >
+                  <option style={{cursor: "pointer"}} value={"attorney"}>Attorney</option>
+                  <option style={{cursor: "pointer"}} value={"court"}>Court</option>
+              </TextField>
+            {
+              userRole === "attorney"?
               <TextField
                 select
                 variant="outlined"
@@ -159,7 +177,8 @@ export default function SignUp(props:Props) {
                 {attorneyCategory && attorneyCategory.map((item:any) => 
                     <option style={{cursor: "pointer"}} key={item.id} value={item.name}>{item.name}</option>
                 )}
-              </TextField>
+              </TextField>:""
+            }
               <TextField
                 variant="outlined"
                 margin="normal"

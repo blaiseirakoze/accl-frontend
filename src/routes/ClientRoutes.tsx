@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { Route, Switch } from "react-router-dom";
 import ListAttorneys from "../pages/customer/attorneyList";
 import CaseForm from "../pages/customer/attorneyDetails";
-import ProtectedRoute from './clientProtectedRoutes'
+import ProtectedRoute from './protectRoutes/clientProtectedRoutes'
 
 const CustomerRoutes: FC = () => {
   return (

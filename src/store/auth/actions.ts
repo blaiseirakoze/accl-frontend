@@ -1,5 +1,5 @@
 import axios from "axios";
-import { LOGIN, ERRORS_AUTH, ILoginParams, SIGNUP, GET_USERS, ATTORNEY_CATEGORY } from "./types";
+import { LOGIN, ERRORS_AUTH, ILoginParams, SIGNUP, GET_USERS, ATTORNEY_CATEGORY, CHANGE_USER_STATUS } from "./types";
 import { AppThunk } from "../configureStore";
 import { dispatchHandler } from "../helper/dispatchHandler";
 import { decode } from "jsonwebtoken";
@@ -24,10 +24,11 @@ export const authActions = (
       const info:any = decode(data.jwt);
       const role = data.role;
       
-      // if(role === "admin"){
-      //   // history.push('/signin');
-      //   window.location.replace('/signin');
-      // }
+      if(role === "admin"){
+        localStorage.setItem("USER-TOKEN", data.jwt+","+data.role);
+        // history.push('/signin');
+        window.location.replace('/admin/users/list');
+      }
       if(role === "client"){
         localStorage.setItem("USER-TOKEN", data.jwt+","+data.role);
         // history.push('/client/attorney/list');
@@ -37,6 +38,11 @@ export const authActions = (
         localStorage.setItem("USER-TOKEN", data.jwt+","+data.role);
         // history.push('/attorney/case/list');
         window.location.replace('/attorney/case/list');
+      }
+      if(role === "court"){
+        localStorage.setItem("USER-TOKEN", data.jwt+","+data.role);
+        // history.push('/signin');
+        window.location.replace('/court/attorney/list');
       }
       // else{
       //   // history.push('/signin');
@@ -61,7 +67,6 @@ export const signUp = ( formData: any ): AppThunk => async dispatch => {
     const info:any = new FormData();
     // formData.append("data", JSON.stringify(info));
     // info.append("data", formData.username);
-    // console.log("info info ", info);
     const URL = "/auth/signup";
     // const header = {
     //   headers: {
@@ -107,6 +112,24 @@ export const getAttorneyCategory = (): AppThunk => async dispatch => {
     const URL = "/api/attorneyCategory";
     const data = await axios.get(URL);
     dispatchHandler({ type: ATTORNEY_CATEGORY, data: data.data, dispatch });
+  } catch (error:any) {
+    if (error) {
+      const data = error || error.response;
+      return dispatchHandler({
+        type: ERRORS_AUTH,
+        data,
+        dispatch
+      });
+    }
+  }
+};
+
+export const changeUserStatus = (id:string): AppThunk => async dispatch => {
+  dispatchHandler({ type: ERRORS_AUTH, data: null, dispatch });
+  try {
+    const URL = `/auth/changeUserStatus/${id}`;
+    const data = await axios.get(URL);
+    dispatchHandler({ type: CHANGE_USER_STATUS, data: data.data, dispatch });
   } catch (error:any) {
     if (error) {
       const data = error || error.response;

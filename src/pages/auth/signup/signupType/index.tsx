@@ -32,20 +32,7 @@ export default function CaseForm() {
         <Container className={classes.cardGrid} maxWidth="md">
           {/* End hero unit */}
           <Grid container spacing={4}>
-              <Grid xs={12} sm={6} md={4} className="col">
-                <Link to="/signup/attorney">
-                <Card className={classes.card}>
-                  <CardContent className={classes.cardContent}>
-                    <Typography gutterBottom variant="h5" component="h2">
-                      ATTORNEY
-                    </Typography>
-                    <Typography>
-                    <BusinessCenter className="signup-icon"/>
-                    </Typography>
-                  </CardContent>
-                </Card>
-                </Link>
-              </Grid>
+              
               <Grid xs={12} sm={6} md={4} className="col">
               <Link to="/signup/customer">
                 <Card className={classes.card}>
@@ -60,6 +47,21 @@ export default function CaseForm() {
                   </Card>
               </Link>
               </Grid>
+              <Grid xs={12} sm={6} md={4} className="col">
+                <Link to="/signup/attorney">
+                <Card className={classes.card}>
+                  <CardContent className={classes.cardContent}>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      ATTORNEY & COURT
+                    </Typography>
+                    <Typography>
+                    <BusinessCenter className="signup-icon"/>
+                    </Typography>
+                  </CardContent>
+                </Card>
+                </Link>
+              </Grid>
+
           </Grid>
         </Container>
       </main>

@@ -1,3 +1,4 @@
+import { CHANGE_CASE_STATUS } from "../attorney/types";
 import { LOGIN, ERRORS_AUTH, IAuthType, SIGNUP, GET_USERS, ATTORNEY_CATEGORY } from "./types";
 
 const initialState = {
@@ -21,6 +22,8 @@ export const authReducer = (
       return { ...state, users: payload }
     case ATTORNEY_CATEGORY:
       return { ...state, attorneyCategory: payload }
+    case CHANGE_CASE_STATUS:
+      return { ...state, changeUserStatusMessage: payload }  
     default:
       return state;
   }
